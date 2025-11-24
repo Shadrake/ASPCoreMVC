@@ -1,0 +1,20 @@
+﻿<h1>Lista de Animales</h1>
+<ul>
+    @foreach (var animal in Model.Animales)
+    {
+        <li>
+            ID: @animal.IdAnimal - @animal.NombreAnimal (@animal.TipoAnimal?.TipoDescripcion) - @animal.Raza
+        </li>
+    }
+</ul>
+
+<h1>Lista de Tipo de Animales</h1>
+<ul>
+    @foreach (var tipoAnimal in Model.TipoAnimales)
+    {
+        <li>
+            ID: @tipoAnimal.IdTipoAnimal - @tipoAnimal.TipoDescripcion
+        </li>
+    }
+</ul>
+
