@@ -40,8 +40,9 @@ namespace ASPCoreMVC.DAL
                             NombreAnimal = reader["NombreAnimal"].ToString(),
                             Raza = reader["Raza"].ToString(),
                             RIdTipoAnimal = (int)reader["RIdTipoAnimal"],
-                            FechaNacimiento = reader["FechaNacimiento"] == DBNull.Value ? null : (DateTime?)reader["FechaNacimiento"],
-                            TipoAnimal = new TipoAnimal
+                            FechaNacimiento = reader["FechaNacimiento"] == DBNull.Value? null
+                            : DateOnly.FromDateTime((DateTime)reader["FechaNacimiento"]),
+                            RIdTipoAnimalNavigation = new TipoAnimal
                             {
                                 IdTipoAnimal = reader["IdTipoAnimal"] == DBNull.Value ? 0 : (int)reader["IdTipoAnimal"],
                                 TipoDescripcion = reader["TipoDescripcion"] == DBNull.Value ? "" : reader["TipoDescripcion"].ToString()
