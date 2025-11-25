@@ -1,24 +1,24 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using ASPCoreMVC.Models;
+﻿using ASPCoreMVC.DAL;
+using ASPCoreMVC.Models.ViewModels;
+using Microsoft.AspNetCore.Mvc;
 
-public class AnimalController : Controller
+namespace ASPCoreMVC.Controllers
 {
-    private readonly AbrilAnimalesContext _context;
-
-    // Inyección de dependencia
-    public AnimalController(AbrilAnimalesContext context)
+    public class AnimalController : Controller
     {
-        _context = context;
-    }
+       /* public IActionResult Details(int id)
+        {
+            AnimalDAL dal = new AnimalDAL();
+            DetailAnimalViewModel vm = new DetailAnimalViewModel();
 
-    public IActionResult Index()
-    {
-        // EF obtiene todos los animales incluyendo su tipo
-        var animales = _context.Animals
-                               .Include(a => a.RIdTipoAnimalNavigation)
-                               .ToList();
+            vm.AnimalDetail = dal.GetById(id);
 
-        return View(animales); // Pasamos los datos a la vista
+            if (vm.AnimalDetail == null)
+            {
+                return NotFound();
+            };
+
+            return View(vm);
+        }*/
     }
 }
