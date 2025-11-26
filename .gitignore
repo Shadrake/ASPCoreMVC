@@ -361,3 +361,7 @@ MigrationBackup/
 
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
+
+# Ignorar archivo de configuración con cadenas de conexión sensibles
+appsettings.json
+/appsettings.json
