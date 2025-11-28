@@ -14,15 +14,13 @@ public partial class AbrilAnimalesContext : DbContext
     }
 
     public virtual DbSet<Animal> Animals { get; set; }
-
-    public virtual DbSet<TipoAnimal> TipoAnimals { get; set; }
+    public virtual DbSet<TipoAnimal> TipoAnimal { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<Animal>(entity =>
         {
             entity.HasKey(e => e.IdAnimal);
-
             entity.ToTable("Animal");
 
             entity.Property(e => e.NombreAnimal)
@@ -34,7 +32,7 @@ public partial class AbrilAnimalesContext : DbContext
                 .IsUnicode(false);
             entity.Property(e => e.RIdTipoAnimal).HasColumnName("RIdTipoAnimal");
 
-            entity.HasOne(d => d.RIdTipoAnimalNavigation).WithMany(p => p.Animals)
+            entity.HasOne(d => d.TipoAnimal).WithMany(p => p.Animals)
                 .HasForeignKey(d => d.RIdTipoAnimal)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_Animal_TipoAnimal");
@@ -43,9 +41,6 @@ public partial class AbrilAnimalesContext : DbContext
         modelBuilder.Entity<TipoAnimal>(entity =>
         {
             entity.HasKey(e => e.IdTipoAnimal);
-
-            entity.ToTable("TipoAnimal");
-
             entity.Property(e => e.TipoDescripcion)
                 .IsRequired()
                 .HasMaxLength(50)

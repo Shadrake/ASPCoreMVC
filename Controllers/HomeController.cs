@@ -1,45 +1,35 @@
 using ASPCoreMVC.DAL;
-using ASPCoreMVC.Models;
 using ASPCoreMVC.Models.ViewModels;
 using Microsoft.AspNetCore.Mvc;
-using System.Diagnostics;
 
-namespace ASPCoreMVC.Controllers
+public class HomeController : Controller
 {
-    public class HomeController : Controller
+    // Acción principal que muestra la lista de animales y tipos
+    public IActionResult Index()
     {
-        private readonly ILogger<HomeController> _logger;
-        private readonly IConfiguration _configuration;
+        AnimalDAL animalDal = new AnimalDAL();
+        TipoAnimalDAL tipoAnimalDal = new TipoAnimalDAL();
 
-        public HomeController(ILogger<HomeController> logger, IConfiguration configuration)
+        // Crear el ViewModel y llenar las listas usando los DAL
+        AnimalViewModel viewModel = new AnimalViewModel
         {
-            _logger = logger;
-            _configuration = configuration;
-        }
+            Animales = animalDal.GetAll(),
+            TipoAnimales = tipoAnimalDal.GetAll()
+        };
 
-        public IActionResult Index()
-        {
-            AnimalDAL dal = new AnimalDAL(_configuration);
-            TipoAnimalDAL dalTipoAnimal = new TipoAnimalDAL(_configuration);
+        return View(viewModel);
+    }
 
-            AnimalViewModel viewModel = new AnimalViewModel
-            {
-                Animales = dal.GetAll(),
-                TipoAnimales = dalTipoAnimal.GetAll()
-            };
+    // Acción POST desde el botón "Ver Detalles" en la lista
+    [HttpPost]
+    public IActionResult AnimalDetails(int id)
+    {
+        // Redirige a la acción Details del AnimalController
+        return RedirectToAction("Details", "Animal", new { id });
+    }
 
-            return View(viewModel);
-        }
-
-        public IActionResult Privacy()
-        {
-            return View();
-        }
-
-        [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
-        public IActionResult Error()
-        {
-            return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
-        }
+    public IActionResult Privacy()
+    {
+        return View();
     }
 }

@@ -1,60 +1,65 @@
 ﻿using ASPCoreMVC.Models;
-using System;
-using System.Collections.Generic;
-using Microsoft.Data.SqlClient;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
 
-namespace ASPCoreMVC.DAL
+public class AnimalDAL
 {
-    public class AnimalDAL
+    private string connectionString;
+
+    public AnimalDAL()
     {
-        private readonly string connectionString;
+        // Leer la cadena de conexión directamente del appsettings.json
+        var configuration = new ConfigurationBuilder()
+            .SetBasePath(Directory.GetCurrentDirectory()) // Carpeta raíz del proyecto
+            .AddJsonFile("appsettings.json")
+            .Build();
 
-        public AnimalDAL(IConfiguration configuration)
-        {
-            connectionString = configuration.GetConnectionString("DefaultConnection");
-        }
-
-        public List<Animal> GetAll()
-        {
-            List<Animal> animales = new List<Animal>();
-
-            using (SqlConnection con = new SqlConnection(connectionString))
-            {
-                string sql = @"
-                    SELECT a.IdAnimal, a.NombreAnimal, a.Raza, a.RIdTipoAnimal, a.FechaNacimiento,
-                           t.IdTipoAnimal, t.TipoDescripcion
-                    FROM dbo.Animal a
-                    LEFT JOIN dbo.TipoAnimal t ON a.RIdTipoAnimal = t.IdTipoAnimal";
-
-                SqlCommand cmd = new SqlCommand(sql, con);
-                con.Open();
-
-                using (SqlDataReader reader = cmd.ExecuteReader())
-                {
-                    while (reader.Read())
-                    {
-                        Animal a = new Animal
-                        {
-                            IdAnimal = (int)reader["IdAnimal"],
-                            NombreAnimal = reader["NombreAnimal"].ToString(),
-                            Raza = reader["Raza"].ToString(),
-                            RIdTipoAnimal = (int)reader["RIdTipoAnimal"],
-                            FechaNacimiento = reader["FechaNacimiento"] == DBNull.Value? null
-                            : DateOnly.FromDateTime((DateTime)reader["FechaNacimiento"]),
-                            RIdTipoAnimalNavigation = new TipoAnimal
-                            {
-                                IdTipoAnimal = reader["IdTipoAnimal"] == DBNull.Value ? 0 : (int)reader["IdTipoAnimal"],
-                                TipoDescripcion = reader["TipoDescripcion"] == DBNull.Value ? "" : reader["TipoDescripcion"].ToString()
-                            }
-                        };
-
-                        animales.Add(a);
-                    }
-                }
-            }
-
-            return animales;
-        }
+        connectionString = configuration.GetConnectionString("DefaultConnection");
     }
+
+    private AbrilAnimalesContext CreateContext()
+    {
+        var options = new DbContextOptionsBuilder<AbrilAnimalesContext>()
+            .UseSqlServer(connectionString)
+            .Options;
+
+        return new AbrilAnimalesContext(options);
+    }
+
+    public List<Animal> GetAll()
+    {
+        using var context = CreateContext();
+        return context.Animals.Include(a => a.TipoAnimal).ToList();
+    }
+
+    public Animal GetById(int id)
+    {
+        using var context = CreateContext();
+        return context.Animals.Include(a => a.TipoAnimal)
+                              .FirstOrDefault(a => a.IdAnimal == id);
+    }
+
+    public void Update(Animal updatedAnimal)
+    {
+        using var context = CreateContext();
+        context.Animals.Update(updatedAnimal);
+        context.SaveChanges();
+    }
+
+    public void Create(Animal createdAnimal)
+    {
+        using var context = CreateContext();
+        context.Animals.Add(createdAnimal);
+        context.SaveChanges();
+    }
+
+    public List<TipoAnimal> GetTipoAnimal()
+    {
+        using var context = CreateContext();
+        return context.TipoAnimal.ToList();
+    }
+
 }

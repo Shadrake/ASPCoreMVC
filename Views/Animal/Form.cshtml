@@ -1,0 +1,33 @@
+﻿@model FormViewModel
+
+<h2>@Model.Title</h2>
+
+<form asp-controller="Animal" asp-action="@Model.ActionName" method="post">
+
+    <input type="hidden" asp-for="Animal.IdAnimal" />
+
+    <div>
+        <label>Nombre</label>
+        <input asp-for="Animal.NombreAnimal" />
+    </div>
+
+    <div>
+        <label>Raza</label>
+        <input asp-for="Animal.Raza" />
+    </div>
+
+    <div>
+        <label>Tipo de Animal</label>
+        <select asp-for="Animal.RIdTipoAnimal" asp-items="Model.TiposAnimal"></select>
+    </div>
+
+    <div>
+        <label>Fecha de nacimiento</label>
+        <input asp-for="Animal.FechaNacimiento" type="date" />
+    </div>
+
+    <button type="submit">Guardar</button>
+
+</form>
+
+<a href="@Url.Action("Index", "Home")">Cancelar</a>

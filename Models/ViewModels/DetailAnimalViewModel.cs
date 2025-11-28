@@ -1,4 +1,6 @@
-﻿namespace ASPCoreMVC.Models.ViewModels
+﻿using ASPCoreMVC.Models;
+
+namespace ASPCoreMVC.Models.ViewModels
 {
     public class DetailAnimalViewModel
     {

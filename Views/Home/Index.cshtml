@@ -3,9 +3,25 @@
     @foreach (var animal in Model.Animales)
     {
         <li>
-            ID: @animal.IdAnimal - @animal.NombreAnimal (@animal.TipoAnimal?.TipoDescripcion) - @animal.Raza
+            <span class="animal-id">ID: @animal.IdAnimal</span> @animal.NombreAnimal
+
+            <!-- Botón Ver Detalles -->
+            <form asp-action="AnimalDetails" asp-controller="Home" method="post" style="display:inline;">
+                <input type="hidden" name="id" value="@animal.IdAnimal" />
+                <button type="submit">Ver Detalles</button>
+            </form>
+
+            <!-- Botón Editar -->
+            <form asp-action="Edit" asp-controller="Animal" method="get" style="display:inline;">
+                <input type="hidden" name="id" value="@animal.IdAnimal" />
+                <button type="submit">Editar</button>
+            </form>
         </li>
     }
+
+    <!-- Botón Crear -->
+    <a href="@Url.Action("Create", "Animal")">Crear Nuevo Animal</a>
+
 </ul>
 
 <h1>Lista de Tipo de Animales</h1>
@@ -13,8 +29,7 @@
     @foreach (var tipoAnimal in Model.TipoAnimales)
     {
         <li>
-            ID: @tipoAnimal.IdTipoAnimal - @tipoAnimal.TipoDescripcion
+            <span class="animal-id">ID: @tipoAnimal.IdTipoAnimal</span> @tipoAnimal.TipoDescripcion
         </li>
     }
 </ul>
-

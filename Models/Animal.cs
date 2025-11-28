@@ -8,14 +8,11 @@ namespace ASPCoreMVC.Models;
 public partial class Animal
 {
     public int IdAnimal { get; set; }
-
     public string NombreAnimal { get; set; }
-
     public string Raza { get; set; }
-
     public int RIdTipoAnimal { get; set; }
-
     public DateOnly? FechaNacimiento { get; set; }
 
-    public virtual TipoAnimal RIdTipoAnimalNavigation { get; set; }
+    // Relación con TipoAnimal
+    public virtual TipoAnimal TipoAnimal { get; set; }
 }

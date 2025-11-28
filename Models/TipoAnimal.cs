@@ -8,8 +8,8 @@ namespace ASPCoreMVC.Models;
 public partial class TipoAnimal
 {
     public int IdTipoAnimal { get; set; }
-
     public string TipoDescripcion { get; set; }
 
+    // Relación con animales
     public virtual ICollection<Animal> Animals { get; set; } = new List<Animal>();
 }

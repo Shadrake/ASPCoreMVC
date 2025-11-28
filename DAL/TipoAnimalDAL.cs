@@ -1,44 +1,45 @@
 ﻿using ASPCoreMVC.Models;
-using System.Collections.Generic;
-using Microsoft.Data.SqlClient;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
 
-namespace ASPCoreMVC.DAL
+public class TipoAnimalDAL
 {
-    public class TipoAnimalDAL
+    private string connectionString;
+
+    public TipoAnimalDAL()
     {
-        private readonly string connectionString;
+        // Leer la cadena de conexión directamente desde appsettings.json
+        var configuration = new ConfigurationBuilder()
+            .SetBasePath(Directory.GetCurrentDirectory()) // Carpeta raíz del proyecto
+            .AddJsonFile("appsettings.json")
+            .Build();
 
-        public TipoAnimalDAL(IConfiguration configuration)
-        {
-            connectionString = configuration.GetConnectionString("DefaultConnection");
-        }
+        connectionString = configuration.GetConnectionString("DefaultConnection");
+    }
 
-        public List<TipoAnimal> GetAll()
-        {
-            List<TipoAnimal> tipos = new List<TipoAnimal>();
+    private AbrilAnimalesContext CreateContext()
+    {
+        var options = new DbContextOptionsBuilder<AbrilAnimalesContext>()
+            .UseSqlServer(connectionString)
+            .Options;
 
-            using (SqlConnection con = new SqlConnection(connectionString))
-            {
-                string sql = "SELECT IdTipoAnimal, TipoDescripcion FROM dbo.TipoAnimal";
+        return new AbrilAnimalesContext(options);
+    }
 
-                SqlCommand cmd = new SqlCommand(sql, con);
-                con.Open();
+    // Obtener todos los tipos de animales
+    public List<TipoAnimal> GetAll()
+    {
+        using var context = CreateContext();
+        return context.TipoAnimal.ToList();
+    }
 
-                using (SqlDataReader reader = cmd.ExecuteReader())
-                {
-                    while (reader.Read())
-                    {
-                        tipos.Add(new TipoAnimal
-                        {
-                            IdTipoAnimal = (int)reader["IdTipoAnimal"],
-                            TipoDescripcion = reader["TipoDescripcion"].ToString()
-                        });
-                    }
-                }
-            }
-
-            return tipos;
-        }
+    // Obtener un tipo de animal por su Id
+    public TipoAnimal GetById(int id)
+    {
+        using var context = CreateContext();
+        return context.TipoAnimal.FirstOrDefault(t => t.IdTipoAnimal == id);
     }
 }
